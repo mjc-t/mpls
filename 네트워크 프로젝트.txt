@@ -1,0 +1,45 @@
+BGP
+ISIS
+MPLS-기본, TE, FRR
+MPLS FRR
+주소 설정: 1.1.1.1/32, 2.2.2.2/32 ...
+1. IGP(OSPF, ISIS)
+2. MPLS TE 활성화
+	mpls label range 라우터번호00 라우터번호99
+	mpls traffic-eng tunnels
+	int ...
+	  mpls ip
+	  mpls traffic-eng tunnels
+3. RSVP를 이용한 가용대역폭 지정
+	int ...
+      ip rsvp bandwidth
+4. CSPF 라우터 설정
+    router isis
+	  mpls traffic-eng router-id lo0
+      mpls traffic-eng level-2
+===
+5. 터널 헤드엔드인 R4: 주터널 설정
+	sh mpls traffic-eng tunnels
+6. PLR(R1): 백업터널 설정
+	sh mpls traffic-eng tunnels backup
+	sh mpls traffic-eng fast-reroute database
+	= 백업터널이 준비상태에 있다.
+7. NHop 라우터 설정
+	ip rsvp signalling hello
+	int ...
+	  ip rsvp signalling hello
+
+R1
+	sh ip rsvp fast-reroute
+	sh mpls traffic-eng tunnels brief
+R2
+	int f0/1
+	  sh
+R1
+	sh mpls traffic-eng tunnels backup
+
+	
+
+
+
+
