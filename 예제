@@ -68,3 +68,83 @@ r3
 router os 1
 net 3.3.3.3 0.0.0.0 a 0
 net 1.1.23.3 0.0.0.0 a 0
+
+2) LDP 구성
+r1
+mpls lab pro ldp
+mpls ldp router-id lo0
+int f0/0
+mpls ip
+r2
+mpls lab pro ldp
+mpls ldp router-id lo0
+int f0/0
+mpls ip
+int f0/1
+mpls ip
+r3
+mpls lab pro ldp
+
+mpls ldp router-id lo0
+int f0/1
+mpls ip
+
+3) MBGP
+r1
+router b 10
+b router-id 1.1.1.1
+nei 3.3.3.3 remot 10
+nei 3.3.3.3 up lo0
+add vpnv4
+nei 3.3.3.3 act
+nei 3.3.3.3 send-com ex
+r3
+router b 10
+b router-id 3.3.3.3
+nei 1.1.1.1 remot 10
+nei 1.1.1.1 up lo0
+add vpnv4
+nei 1.1.1.1 act
+nei 1.1.1.1 send-com ex
+
+4) vrf 
+r1
+ip vrf BLUE
+    rd 10:100
+    route-t bo 10:100
+int f0/1
+    ip vrf for BLUE
+    ip add 1.1.14.1 255.255.255.0
+r3
+ip vrf BLUE
+   rd 10:100
+   route-t bo 10:100
+int f0/0
+    ip vrf for BLUE
+    ip add 1.1.35.3 255.255.255.0
+
+5) PE-CE Routing
+r1
+router os 10 vrf BLUE
+net 1.1.14.1 0.0.0.0 a 0
+redi bgp 10 sub
+router b 10
+add ipv4 vrf BLUE
+redi os 10 mat int ex 1 ex 2
+r3
+router os 10 vrf BLUE
+net 1.1.35.3 0.0.0.0 a 0
+redi bgp 10 sub
+
+router b 10
+add ipv4 vrf BLUE
+redi os 10 mat int ex 1 ex 2
+
+r4
+router os 1
+net 4.4.4.4 0.0.0.0 a 0
+net 1.1.14.4 0.0.0.0 a 0
+r5
+router os 1
+net 5.5.5.5 0.0.0.0 a 0
+net 1.1.35.5 0.0.0.0 a 0
