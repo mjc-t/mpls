@@ -1,0 +1,70 @@
+0) 인터페이스 주소 설정
+
+(r4) - f0/1 - (r1) - f0/0 - (r2) - f0/1 - (r3) - f0/0 - (r5)
+pe: r1, r3
+p: r2
+ce: r4, r5
+
+r1
+conf t
+int lo0
+ip add 1.1.1.1 255.255.255.255
+int f0/0
+no sh
+ip add 1.1.12.1 255.255.255.0
+int f0/1
+no sh
+ip add 1.1.14.1 255.255.255.0
+---
+r2
+conf t
+int lo0
+ip add 2.2.2.2 255.255.255.255
+int f0/0
+no sh
+ip add 1.1.12.2 255.255.255.0
+int f0/1
+no sh
+ip add 1.1.23.2 255.255.255.0
+---
+r3
+conf t
+int lo0
+ip add 3.3.3.3 255.255.255.255
+int f0/1
+no sh
+ip add 1.1.23.3 255.255.255.0
+int f0/0
+no sh
+ip add 1.1.35.3 255.255.255.0
+---
+r4
+conf t
+int lo0
+ip add 4.4.4.4 255.255.255.255
+int f0/1
+no sh
+ip add 1.1.14.4 255.255.255.0
+---
+r5
+conf t
+int lo0
+ip add 5.5.5.5 255.255.255.255
+int f0/0
+no sh
+ip add 1.1.35.5 255.255.255.0
+
+1) IGP 구성
+r1
+router os 1
+net 1.1.1.1 0.0.0.0 a 0
+net 1.1.12.1 0.0.0.0 a 0
+r2
+router os 1
+net 2.2.2.2 0.0.0.0 a 0
+net 1.1.12.2 0.0.0.0 a 0
+net 1.1.23.2 0.0.0.0 a 0
+r3
+router os 1
+net 3.3.3.3 0.0.0.0 a 0
+net 1.1.23.3 0.0.0.0 a 0
